@@ -40,17 +40,15 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        distance_km = self.action * self.LEN_STEP / self.M_IN_KM
-        return distance_km
+        return self.action * self.LEN_STEP / self.M_IN_KM
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        mean_speed = self.get_distance() / self.duration
-        return mean_speed
+        return self.get_distance() / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        NotImplementedError
+        raise NotImplementedError
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -67,12 +65,11 @@ class Running(Training):
     CALORIES_MEAN_SPEED_SHIFT = 1.79
 
     def get_spent_calories(self) -> float:
-        ccal = ((self.CALORIES_MEAN_SPEED_MULTIPLIER
+        return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
                  * self.get_mean_speed()
                  + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight / self.M_IN_KM
                 * self.duration * self.MIN_IN_HOUR)
-        return ccal
 
 
 class SportsWalking(Training):
@@ -120,16 +117,14 @@ class Swimming(Training):
         self.count_pool = count_pool
 
     def get_mean_speed(self) -> float:
-        mean_speed_swim = (self.length_pool * self.count_pool
-                           / self.M_IN_KM / self.duration)
-        return mean_speed_swim
+        return (self.length_pool * self.count_pool
+                / self.M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
-        swim_ccal = ((Swimming.get_mean_speed(self)
-                      + self.CALORIES_SPEED_SHIFT)
-                     * self.CALORIES_WEIGHT_SHIFT * self.weight
-                     * self.duration)
-        return swim_ccal
+        return ((Swimming.get_mean_speed(self)
+                 + self.CALORIES_SPEED_SHIFT)
+                * self.CALORIES_WEIGHT_SHIFT * self.weight
+                * self.duration)
 
 
 def read_package(workout_type: str, data: list) -> Training:
@@ -140,9 +135,8 @@ def read_package(workout_type: str, data: list) -> Training:
         'WLK': SportsWalking,
     }
     if workout_type not in workout_class:
-        raise Exception("Unknown training type")
-    else:
-        return workout_class[workout_type](*data)
+        raise NameError('Unknown training type')
+    return workout_class[workout_type](*data)
 
 
 def main(training: Training) -> None:
